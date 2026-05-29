@@ -45,13 +45,18 @@
       <div id="order-query" class="order-query-block">
         <h5>订单查询</h5>
         <form class="query-form" @submit.prevent>
-          <input type="text" placeholder="请输入订单号" />
+          <input type="text" placeholder="请输入邮箱" />
           <input type="tel" placeholder="预留手机号" />
           <button type="submit">查询</button>
         </form>
       </div>
 
       <div class="footer-bottom">
+        <p class="footer-nav-links">
+          <a href="#">品牌馆</a>
+          <span>|</span>
+          <a href="#">新品上市</a>
+        </p>
         <p>© 2026 胖子腕表 Pangzi Watches. 保留所有权利.</p>
         <p class="footer-legal">
           <a href="#">隐私政策</a>
@@ -191,6 +196,26 @@
 
 .footer-bottom p {
   margin: 0 0 8px;
+}
+
+.footer-nav-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px !important;
+  opacity: 0.85;
+}
+
+.footer-nav-links a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.footer-nav-links a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
 .footer-legal {

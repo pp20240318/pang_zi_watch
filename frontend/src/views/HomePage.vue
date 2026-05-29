@@ -9,7 +9,10 @@ import { banners, brands, products } from '../data/catalog.js'
 
 const activeBrand = ref('all')
 
+const isCustomOrder = computed(() => activeBrand.value === 'custom-order')
+
 const filteredProducts = computed(() => {
+  if (isCustomOrder.value) return []
   if (activeBrand.value === 'all') return products
   return products.filter((p) => p.brandId === activeBrand.value)
 })
@@ -22,14 +25,13 @@ function onOrder(product) {
 <template>
   <div class="home-page">
     <AppHeader />
-    <BannerCarousel :slides="banners" />
+    <div class="page-container">
+      <BannerCarousel :slides="banners" />
+    </div>
 
-    <main class="main-content">
+    <main class="main-content page-container">
       <section class="catalog-section">
-        <div class="section-header">
-          <h2>精选腕表</h2>
-          <p>正品行货 · 顺丰包邮 · 7天无理由退换</p>
-        </div>
+      
 
         <div class="catalog-layout">
           <BrandSidebar
@@ -39,17 +41,24 @@ function onOrder(product) {
           />
 
           <div class="product-area">
-            <p class="result-hint">
-              共 <strong>{{ filteredProducts.length }}</strong> 款商品
-            </p>
-            <div class="product-grid">
-              <ProductCard
-                v-for="product in filteredProducts"
-                :key="product.id"
-                :product="product"
-                @order="onOrder"
-              />
+            <div v-if="isCustomOrder" class="custom-order-panel">
+              <h3>其他品牌定制下单</h3>
+              <p>如需劳力士、欧米茄以外的品牌或特殊款式，请联系在线客服为您报价并安排下单。</p>
+              <a href="tel:4008886688" class="custom-order-cta">联系客服：400-888-6688</a>
             </div>
+            <template v-else>
+              <p class="result-hint">
+                共 <strong>{{ filteredProducts.length }}</strong> 款商品
+              </p>
+              <div class="product-grid">
+                <ProductCard
+                  v-for="product in filteredProducts"
+                  :key="product.id"
+                  :product="product"
+                  @order="onOrder"
+                />
+              </div>
+            </template>
           </div>
         </div>
       </section>
@@ -67,13 +76,18 @@ function onOrder(product) {
   background: var(--color-bg);
 }
 
-.main-content {
-  flex: 1;
+.page-container {
   max-width: 1280px;
   margin: 0 auto;
   width: 100%;
-  padding: 40px 24px 0;
+  padding-left: 24px;
+  padding-right: 24px;
   box-sizing: border-box;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 40px;
 }
 
 .section-header {
@@ -121,13 +135,56 @@ function onOrder(product) {
   gap: 20px;
 }
 
+.custom-order-panel {
+  padding: 48px 32px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.custom-order-panel h3 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--color-primary);
+  margin: 0 0 12px;
+}
+
+.custom-order-panel p {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto 24px;
+}
+
+.custom-order-cta {
+  display: inline-block;
+  padding: 12px 28px;
+  background: var(--color-accent);
+  color: #1a2332;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 4px;
+  transition: opacity 0.2s;
+}
+
+.custom-order-cta:hover {
+  opacity: 0.9;
+}
+
 @media (max-width: 768px) {
   .catalog-layout {
     grid-template-columns: 1fr;
   }
 
+  .page-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
   .main-content {
-    padding: 24px 16px 0;
+    padding-top: 24px;
   }
 }
 </style>

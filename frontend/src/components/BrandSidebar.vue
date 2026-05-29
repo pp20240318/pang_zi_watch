@@ -15,11 +15,11 @@ const emit = defineEmits(['select'])
         <button
           type="button"
           class="brand-item"
-          :class="{ active: brand.id === activeId }"
+          :class="{ active: brand.id === activeId, 'brand-item--contact': brand.contact }"
           @click="emit('select', brand.id)"
         >
           <span class="brand-name">{{ brand.name }}</span>
-          <span class="brand-count">{{ brand.count }}</span>
+          <span v-if="!brand.contact" class="brand-count">{{ brand.count }}</span>
         </button>
       </li>
     </ul>
@@ -30,7 +30,6 @@ const emit = defineEmits(['select'])
         alt="精品腕表"
         class="promo-img"
       />
-      <p class="promo-text">正品保障 · 全国联保</p>
     </div>
   </aside>
 </template>
@@ -116,16 +115,18 @@ const emit = defineEmits(['select'])
   display: block;
 }
 
-.promo-text {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0;
-  padding: 8px 12px;
-  background: linear-gradient(transparent, rgba(26, 35, 50, 0.85));
-  color: #fff;
-  font-size: 0.75rem;
-  text-align: center;
+.brand-item--contact .brand-name {
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.brand-item--contact {
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.brand-item--contact.active {
+  border-left-color: var(--color-accent);
 }
 </style>

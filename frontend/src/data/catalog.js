@@ -27,12 +27,13 @@ export const banners = [
 
 export const brands = [
   { id: 'all', name: '全部系列', count: 12 },
-  { id: 'rolex', name: '劳力士', count: 3 },
-  { id: 'omega', name: '欧米茄', count: 2 },
+  { id: 'rolex', name: '劳力士系列', count: 3 },
+  { id: 'omega', name: '欧米茄超霸史努比系列', count: 2 },
   { id: 'cartier', name: '卡地亚', count: 2 },
   { id: 'tag', name: '泰格豪雅', count: 2 },
   { id: 'seiko', name: '精工', count: 2 },
   { id: 'citizen', name: '西铁城', count: 1 },
+  { id: 'custom-order', name: '需要其他品牌，联系客服下单', contact: true },
 ]
 
 export const products = [

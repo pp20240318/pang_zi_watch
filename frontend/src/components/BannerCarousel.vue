@@ -72,9 +72,8 @@ onUnmounted(stopAutoplay)
 .banner {
   position: relative;
   overflow: hidden;
-  border-radius: 0 0 8px 8px;
-  max-width: 1280px;
-  margin: 0 auto;
+  border-radius: 8px;
+  width: 100%;
 }
 
 .banner-track {
@@ -84,7 +83,7 @@ onUnmounted(stopAutoplay)
 
 .banner-slide {
   flex: 0 0 100%;
-  min-height: 420px;
+  min-height: 280px;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -106,7 +105,7 @@ onUnmounted(stopAutoplay)
 .banner-content {
   position: relative;
   z-index: 1;
-  padding: 48px 64px;
+  padding: 32px 48px;
   max-width: 520px;
   color: #fff;
 }
@@ -120,7 +119,7 @@ onUnmounted(stopAutoplay)
 
 .banner-title {
   font-family: var(--font-serif);
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 500;
   margin: 0 0 12px;
   line-height: 1.2;
@@ -205,7 +204,7 @@ onUnmounted(stopAutoplay)
 
 @media (max-width: 768px) {
   .banner-slide {
-    min-height: 320px;
+    min-height: 220px;
   }
 
   .banner-content {
