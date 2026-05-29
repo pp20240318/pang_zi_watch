@@ -17,9 +17,6 @@ const filteredProducts = computed(() => {
   return products.filter((p) => p.brandId === activeBrand.value)
 })
 
-function onOrder(product) {
-  alert(`已加入下单流程：${product.name}\n价格：¥${product.price.toLocaleString('zh-CN')}`)
-}
 </script>
 
 <template>
@@ -55,7 +52,6 @@ function onOrder(product) {
                   v-for="product in filteredProducts"
                   :key="product.id"
                   :product="product"
-                  @order="onOrder"
                 />
               </div>
             </template>

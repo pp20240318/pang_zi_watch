@@ -5,13 +5,13 @@ import logoUrl from '../assets/logo.svg'
 <template>
   <header class="site-header">
     <div class="header-inner">
-      <a href="/" class="logo">
+      <router-link to="/" class="logo">
         <img :src="logoUrl" alt="胖子腕表" class="logo-icon" />
         <div class="logo-text">
           <span class="logo-name">胖子腕表</span>
           <span class="logo-slogan">PANGZI WATCHES</span>
         </div>
-      </a>
+      </router-link>
 
       <nav class="header-nav">
         <a href="#" class="nav-link">售后服务</a>

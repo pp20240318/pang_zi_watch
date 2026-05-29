@@ -1,9 +1,14 @@
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   product: { type: Object, required: true },
 })
 
-const emit = defineEmits(['order'])
+const orderTo = computed(() => ({
+  path: '/order',
+  query: { productId: String(props.product.id) },
+}))
 
 function formatPrice(price) {
   return price.toLocaleString('zh-CN')
@@ -43,9 +48,9 @@ const starData = stars(props.product.rating)
           <span class="currency">¥</span>
           <span class="amount">{{ formatPrice(product.price) }}</span>
         </div>
-        <button type="button" class="btn-order" @click="emit('order', product)">
+        <router-link :to="orderTo" class="btn-order">
           立即下单
-        </button>
+        </router-link>
       </div>
     </div>
   </article>
@@ -171,6 +176,9 @@ const starData = stars(props.product.rating)
 
 .btn-order {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 14px;
   border: none;
   background: var(--color-primary);
@@ -178,6 +186,7 @@ const starData = stars(props.product.rating)
   font-size: 0.8rem;
   border-radius: 4px;
   cursor: pointer;
+  text-decoration: none;
   transition: background 0.2s;
 }
 
