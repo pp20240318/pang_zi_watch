@@ -50,6 +50,22 @@ type Product struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+type SiteSetting struct {
+	ID               uint      `gorm:"primaryKey" json:"id"`
+	SiteName         string    `gorm:"size:128" json:"siteName"`
+	SiteSlogan       string    `gorm:"size:128" json:"siteSlogan"`
+	BrandDescription string    `gorm:"type:text" json:"brandDescription"`
+	ServicePhone     string    `gorm:"size:32" json:"servicePhone"`
+	ServiceHours     string    `gorm:"size:64" json:"serviceHours"`
+	Copyright        string    `gorm:"size:256" json:"copyright"`
+	IcpNumber        string    `gorm:"size:64" json:"icpNumber"`
+	IcpLink          string    `gorm:"size:256" json:"icpLink"`
+	ContactEmail     string    `gorm:"size:128" json:"contactEmail"`
+	BusinessEmail    string    `gorm:"size:128" json:"businessEmail"`
+	CompanyAddress   string    `gorm:"type:text" json:"companyAddress"`
+	UpdatedAt        time.Time `json:"updated_at"`
+}
+
 type ContentPage struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	Slug      string    `gorm:"uniqueIndex;size:64" json:"slug"`

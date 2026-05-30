@@ -15,6 +15,7 @@ func main() {
 	service.EnsureDefaultAdmin(conn)
 	service.SeedCatalog(conn)
 	service.SeedContentPages(conn)
+	service.EnsureSiteSettings(conn)
 
 	r := router.Setup(conn, cfg)
 	log.Printf("watch admin API listening on %s", cfg.Addr())

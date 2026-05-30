@@ -1,6 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { fetchPages } from '../api/public.js'
+import { useSiteSettings } from '../composables/useSiteSettings.js'
+
+const { settings } = useSiteSettings()
 
 const FOOTER_CATEGORIES = ['购物指南', '售后服务', '关于我们']
 const LEGAL_CATEGORY = '法律条款'
@@ -50,11 +53,11 @@ const legalPages = computed(() =>
     <div class="footer-inner">
       <div class="footer-grid">
         <div class="footer-brand">
-          <h4>胖子腕表</h4>
-          <p>专注正品名表销售，提供全国联保与专业售后服务。让每一秒都值得珍藏。</p>
+          <h4>{{ settings.siteName }}</h4>
+          <p>{{ settings.brandDescription }}</p>
           <div class="footer-contact">
-            <span>客服热线：400-888-6688</span>
-            <span>服务时间：9:00 - 21:00</span>
+            <span>客服热线：{{ settings.servicePhone }}</span>
+            <span>服务时间：{{ settings.serviceHours }}</span>
           </div>
         </div>
 
@@ -81,17 +84,15 @@ const legalPages = computed(() =>
       </div>
 
       <div class="footer-bottom">
-        <p>© 2026 胖子腕表 Pangzi Watches. 保留所有权利.</p>
-        <p v-if="legalPages.length" class="footer-legal">
+        <p>{{ settings.copyright }}</p>
+        <p v-if="legalPages.length || settings.icpNumber" class="footer-legal">
           <template v-for="(item, idx) in legalPages" :key="item.slug">
             <router-link :to="`/page/${item.slug}`">{{ item.title }}</router-link>
             <span v-if="idx < legalPages.length - 1">|</span>
           </template>
-          <span>|</span>
-          <span>ICP备案号：京ICP备xxxxxxxx号</span>
-        </p>
-        <p v-else class="footer-legal">
-          <span>ICP备案号：京ICP备xxxxxxxx号</span>
+          <span v-if="legalPages.length && settings.icpNumber">|</span>
+          <a v-if="settings.icpLink" :href="settings.icpLink" target="_blank" rel="noopener">ICP备案号：{{ settings.icpNumber }}</a>
+          <span v-else-if="settings.icpNumber">ICP备案号：{{ settings.icpNumber }}</span>
         </p>
       </div>
     </div>

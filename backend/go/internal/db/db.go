@@ -35,6 +35,7 @@ func Connect(cfg config.Config) *gorm.DB {
 		&models.Product{},
 		&models.Banner{},
 		&models.ContentPage{},
+		&models.SiteSetting{},
 		&models.Order{},
 	); err != nil {
 		log.Fatalf("failed to migrate: %v", err)

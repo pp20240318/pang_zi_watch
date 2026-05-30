@@ -45,6 +45,7 @@ const permissionGroups = [
   { label: '仪表盘', items: ['dashboard:view'] },
   { label: '轮播', items: ['banner:read', 'banner:write', 'banner:delete'] },
   { label: '页面', items: ['page:read', 'page:write', 'page:delete'] },
+  { label: '站点', items: ['setting:read', 'setting:write'] },
   { label: '品牌', items: ['brand:read', 'brand:write', 'brand:delete'] },
   { label: '商品', items: ['product:read', 'product:write', 'product:delete'] },
   { label: '订单', items: ['order:read', 'order:write'] },

@@ -50,3 +50,7 @@ export function fetchPages() {
 export function fetchPage(slug) {
   return request(`/api/public/pages/${slug}`).then((r) => r.data)
 }
+
+export function fetchSettings() {
+  return request('/api/public/settings').then((r) => r.data)
+}

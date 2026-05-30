@@ -1,15 +1,18 @@
 <script setup>
 import logoUrl from '../assets/logo.svg'
+import { useSiteSettings } from '../composables/useSiteSettings.js'
+
+const { settings } = useSiteSettings()
 </script>
 
 <template>
   <header class="site-header">
     <div class="header-inner">
       <router-link to="/" class="logo">
-        <img :src="logoUrl" alt="胖子腕表" class="logo-icon" />
+        <img :src="logoUrl" :alt="settings.siteName" class="logo-icon" />
         <div class="logo-text">
-          <span class="logo-name">胖子腕表</span>
-          <span class="logo-slogan">PANGZI WATCHES</span>
+          <span class="logo-name">{{ settings.siteName }}</span>
+          <span class="logo-slogan">{{ settings.siteSlogan }}</span>
         </div>
       </router-link>
 
