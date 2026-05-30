@@ -3,7 +3,8 @@ import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
-import { products } from '../data/catalog.js'
+import { products as fallbackProducts } from '../data/catalog.js'
+import { fetchProduct, createOrder } from '../api/public.js'
 import { savePendingOrder } from '../utils/orderStorage.js'
 
 const route = useRoute()
@@ -50,43 +51,53 @@ function validate() {
   return Object.keys(next).length === 0
 }
 
-function onSubmit() {
+async function onSubmit() {
   if (!product.value || submitting.value) return
   if (!validate()) return
 
   submitting.value = true
-  const order = {
-    orderNo: `PZ${Date.now()}`,
-    product: {
-      id: product.value.id,
-      name: product.value.name,
-      image: product.value.image,
-      price: product.value.price,
-    },
-    customer: {
-      name: form.value.name.trim(),
-      email: form.value.email.trim(),
-      phone: form.value.phone.trim(),
-      address: form.value.address.trim(),
-      remark: form.value.remark.trim(),
-    },
-    createdAt: new Date().toISOString(),
+  try {
+    const data = await createOrder({
+      productId: product.value.id,
+      payAmount: totalPrice.value,
+      customer: {
+        name: form.value.name.trim(),
+        email: form.value.email.trim(),
+        phone: form.value.phone.trim(),
+        address: form.value.address.trim(),
+        remark: form.value.remark.trim(),
+      },
+    })
+    const order = {
+      orderNo: data.orderNo,
+      product: data.product,
+      customer: data.customer,
+      payAmount: data.payAmount,
+      createdAt: data.createdAt,
+    }
+    savePendingOrder(order)
+    router.push({ name: 'payment' })
+  } catch (e) {
+    alert(e.message || '下单失败，请稍后重试')
+  } finally {
+    submitting.value = false
   }
-
-  savePendingOrder(order)
-  router.push({ name: 'payment' })
 }
 
-function resolveProduct() {
+async function resolveProduct() {
   const raw = route.query.productId
   if (raw == null || raw === '') return null
-  return products.find((p) => String(p.id) === String(raw)) ?? null
+  try {
+    return await fetchProduct(raw)
+  } catch {
+    return fallbackProducts.find((p) => String(p.id) === String(raw)) ?? null
+  }
 }
 
 watch(
   () => route.query.productId,
-  () => {
-    const found = resolveProduct()
+  async () => {
+    const found = await resolveProduct()
     if (!found) {
       router.replace({ name: 'home' })
       return

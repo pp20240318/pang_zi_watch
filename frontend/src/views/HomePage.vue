@@ -1,20 +1,41 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AppHeader from '../components/AppHeader.vue'
 import BannerCarousel from '../components/BannerCarousel.vue'
 import BrandSidebar from '../components/BrandSidebar.vue'
 import ProductCard from '../components/ProductCard.vue'
 import AppFooter from '../components/AppFooter.vue'
-import { banners, brands, products } from '../data/catalog.js'
+import { banners as fallbackBanners, brands as fallbackBrands, products as fallbackProducts } from '../data/catalog.js'
+import { fetchBanners, fetchBrands, fetchProducts } from '../api/public.js'
 
+const banners = ref([...fallbackBanners])
+const brands = ref([...fallbackBrands])
+const products = ref([...fallbackProducts])
 const activeBrand = ref('all')
+
+onMounted(async () => {
+  try {
+    const [b, br, p] = await Promise.all([fetchBanners(), fetchBrands(), fetchProducts()])
+    banners.value = b.map((item) => ({
+      id: item.id,
+      title: item.title,
+      subtitle: item.subtitle,
+      image: item.image,
+      cta: item.cta,
+    }))
+    brands.value = br
+    products.value = p
+  } catch {
+    /* 使用 catalog.js 静态兜底 */
+  }
+})
 
 const isCustomOrder = computed(() => activeBrand.value === 'custom-order')
 
 const filteredProducts = computed(() => {
   if (isCustomOrder.value) return []
-  if (activeBrand.value === 'all') return products
-  return products.filter((p) => p.brandId === activeBrand.value)
+  if (activeBrand.value === 'all') return products.value
+  return products.value.filter((p) => p.brandId === activeBrand.value)
 })
 
 </script>

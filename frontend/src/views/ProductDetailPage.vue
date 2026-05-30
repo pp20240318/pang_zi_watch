@@ -4,7 +4,11 @@ import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
 import ProductCard from '../components/ProductCard.vue'
-import { products, brands } from '../data/catalog.js'
+import { products as fallbackProducts, brands as fallbackBrands } from '../data/catalog.js'
+import { fetchProduct, fetchProducts, fetchBrands } from '../api/public.js'
+
+const allProducts = ref([...fallbackProducts])
+const brands = ref([...fallbackBrands])
 
 const route = useRoute()
 const router = useRouter()
@@ -17,7 +21,7 @@ const isFavorite = ref(false)
 
 const brandName = computed(() => {
   if (!product.value) return ''
-  const brand = brands.find((b) => b.id === product.value.brandId)
+  const brand = brands.value.find((b) => b.id === product.value.brandId)
   return brand?.name ?? ''
 })
 
@@ -28,7 +32,7 @@ const orderTo = computed(() => ({
 
 const relatedProducts = computed(() => {
   if (!product.value) return []
-  return products
+  return allProducts.value
     .filter((p) => p.brandId === product.value.brandId && p.id !== product.value.id)
     .slice(0, 4)
 })
@@ -56,34 +60,46 @@ const deliveryDate = computed(() => {
 })
 
 const specs = computed(() => {
-  const common = [
+  const base = [
     { label: '品牌', value: brandName.value },
     { label: '商品编号', value: `PZ-${String(product.value?.id ?? 0).padStart(6, '0')}` },
+  ]
+  const fromApi = product.value?.specs
+  if (Array.isArray(fromApi) && fromApi.length) {
+    return [...base, ...fromApi.map((s) => ({ label: s.label, value: s.value }))]
+  }
+  return [
+    ...base,
     { label: '机芯类型', value: '瑞士自动机械' },
     { label: '表壳材质', value: '904L 精钢' },
     { label: '表镜', value: '蓝宝石水晶，防反光涂层' },
     { label: '防水深度', value: '100 米 / 10 ATM' },
     { label: '表径', value: '41 mm' },
-    { label: '表带', value: '蚝式精钢表带' },
-    { label: '表扣', value: '折叠 Oysterlock 安全扣' },
-    { label: '动力储存', value: '约 70 小时' },
     { label: '保修', value: '国际联保 2 年' },
-    { label: '产地', value: '瑞士' },
   ]
-  return common
 })
 
 const shortSpecs = computed(() => specs.value.slice(2, 7))
 
-const variants = [
-  { id: 'default', label: '经典黑面', priceOffset: 0 },
-  { id: 'blue', label: '蓝色表盘', priceOffset: 3200 },
-  { id: 'green', label: '绿色表盘', priceOffset: 5800 },
-]
+const variants = computed(() => {
+  const fromApi = product.value?.variants
+  if (Array.isArray(fromApi) && fromApi.length) {
+    return fromApi.map((v) => ({
+      id: v.id,
+      label: v.label,
+      priceOffset: Number(v.priceOffset ?? 0),
+    }))
+  }
+  return [
+    { id: 'default', label: '经典黑面', priceOffset: 0 },
+    { id: 'blue', label: '蓝色表盘', priceOffset: 3200 },
+    { id: 'green', label: '绿色表盘', priceOffset: 5800 },
+  ]
+})
 
 const displayPrice = computed(() => {
   if (!product.value) return 0
-  const variant = variants.find((v) => v.id === selectedVariant.value)
+  const variant = variants.value.find((v) => v.id === selectedVariant.value)
   return product.value.price + (variant?.priceOffset ?? 0)
 })
 
@@ -142,24 +158,37 @@ function selectImage(index) {
   activeImage.value = index
 }
 
-function resolveProduct() {
-  const raw = route.params.id
-  if (raw == null || raw === '') return null
-  return products.find((p) => String(p.id) === String(raw)) ?? null
-}
-
-watch(
-  () => route.params.id,
-  () => {
-    const found = resolveProduct()
+async function loadProduct(id) {
+  try {
+    const [p, list, br] = await Promise.all([
+      fetchProduct(id),
+      fetchProducts(),
+      fetchBrands(),
+    ])
+    product.value = p
+    allProducts.value = list
+    brands.value = br
+  } catch {
+    const found = allProducts.value.find((item) => String(item.id) === String(id))
     if (!found) {
       router.replace({ name: 'home' })
       return
     }
     product.value = found
-    activeImage.value = 0
-    selectedVariant.value = 'default'
-    activeTab.value = 'description'
+  }
+  activeImage.value = 0
+  selectedVariant.value = 'default'
+  activeTab.value = 'description'
+}
+
+watch(
+  () => route.params.id,
+  (id) => {
+    if (id == null || id === '') {
+      router.replace({ name: 'home' })
+      return
+    }
+    loadProduct(id)
   },
   { immediate: true },
 )

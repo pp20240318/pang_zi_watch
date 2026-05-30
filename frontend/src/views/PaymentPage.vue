@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import AppHeader from '../components/AppHeader.vue'
 import AppFooter from '../components/AppFooter.vue'
 import { loadPendingOrder, clearPendingOrder } from '../utils/orderStorage.js'
+import { payOrder } from '../api/public.js'
 
 const router = useRouter()
 const order = ref(null)
@@ -11,20 +12,24 @@ const paymentMethod = ref('wechat')
 const paying = ref(false)
 const paid = ref(false)
 
-const totalPrice = computed(() => order.value?.product?.price ?? 0)
+const totalPrice = computed(() => order.value?.payAmount ?? order.value?.product?.price ?? 0)
 
 function formatPrice(price) {
   return price.toLocaleString('zh-CN')
 }
 
-function onPay() {
+async function onPay() {
   if (!order.value || paying.value || paid.value) return
   paying.value = true
-  setTimeout(() => {
-    paying.value = false
+  try {
+    await payOrder(order.value.orderNo, paymentMethod.value)
     paid.value = true
     clearPendingOrder()
-  }, 1200)
+  } catch (e) {
+    alert(e.message || '支付失败')
+  } finally {
+    paying.value = false
+  }
 }
 
 function goHome() {
