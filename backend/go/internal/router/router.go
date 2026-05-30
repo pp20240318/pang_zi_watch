@@ -6,6 +6,7 @@ import (
 	"watch/backend/internal/config"
 	"watch/backend/internal/handler"
 	"watch/backend/internal/middleware"
+	"watch/backend/internal/static"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -15,6 +16,12 @@ func Setup(db *gorm.DB, cfg config.Config) *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.CORS())
 	r.Static("/uploads", "./uploads")
+	if imagesDir := static.ResolveCatalogImagesDir(); imagesDir != "" {
+		static.LogCatalogImagesReady(imagesDir)
+		r.Static("/images", imagesDir)
+	} else {
+		static.LogCatalogImagesReady("")
+	}
 
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
