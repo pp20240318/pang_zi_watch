@@ -27,6 +27,30 @@ type publicBrand struct {
 	Contact bool   `json:"contact,omitempty"`
 }
 
+func PublicListPages(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var pages []models.ContentPage
+		q := db.Where("enabled = ?", true).Order("category asc, sort asc, id asc")
+		if cat := c.Query("category"); cat != "" {
+			q = q.Where("category = ?", cat)
+		}
+		q.Select("id, slug, title, category, sort").Find(&pages)
+		c.JSON(http.StatusOK, gin.H{"data": pages})
+	}
+}
+
+func PublicGetPage(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		slug := c.Param("slug")
+		var page models.ContentPage
+		if err := db.Where("slug = ? AND enabled = ?", slug, true).First(&page).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": page})
+	}
+}
+
 func PublicListBrands(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var totalProducts int64

@@ -8,6 +8,10 @@
       <el-icon><Picture /></el-icon>
       <span>轮播管理</span>
     </el-menu-item>
+    <el-menu-item v-if="canAny(['page:read','page:write'])" index="/pages" route="/pages">
+      <el-icon><Document /></el-icon>
+      <span>页面管理</span>
+    </el-menu-item>
     <el-menu-item v-if="canAny(['brand:read','brand:write'])" index="/brands" route="/brands">
       <el-icon><Collection /></el-icon>
       <span>品牌管理</span>

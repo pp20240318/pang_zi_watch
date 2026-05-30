@@ -42,3 +42,11 @@ export function payOrder(orderNo, paymentMethod) {
     body: JSON.stringify({ paymentMethod }),
   }).then((r) => r.data)
 }
+
+export function fetchPages() {
+  return request('/api/public/pages').then((r) => r.data)
+}
+
+export function fetchPage(slug) {
+  return request(`/api/public/pages/${slug}`).then((r) => r.data)
+}

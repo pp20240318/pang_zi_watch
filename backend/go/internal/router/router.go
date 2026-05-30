@@ -30,6 +30,8 @@ func Setup(db *gorm.DB, cfg config.Config) *gin.Engine {
 			public.GET("/brands", handler.PublicListBrands(db))
 			public.GET("/products", handler.PublicListProducts(db))
 			public.GET("/products/:id", handler.PublicGetProduct(db))
+			public.GET("/pages", handler.PublicListPages(db))
+			public.GET("/pages/:slug", handler.PublicGetPage(db))
 			public.POST("/orders", handler.PublicCreateOrder(db))
 			public.POST("/orders/:orderNo/pay", handler.PublicPayOrder(db))
 		}
@@ -60,6 +62,12 @@ func Setup(db *gorm.DB, cfg config.Config) *gin.Engine {
 			banners.POST("", middleware.RequirePermission("banner:write"), handler.CreateBanner(db))
 			banners.PUT("/:id", middleware.RequirePermission("banner:write"), handler.UpdateBanner(db))
 			banners.DELETE("/:id", middleware.RequirePermission("banner:delete"), handler.DeleteBanner(db))
+
+			pages := authGroup.Group("/pages")
+			pages.GET("", middleware.RequireAnyPermission("page:read", "page:write"), handler.ListPages(db))
+			pages.POST("", middleware.RequirePermission("page:write"), handler.CreatePage(db))
+			pages.PUT("/:id", middleware.RequirePermission("page:write"), handler.UpdatePage(db))
+			pages.DELETE("/:id", middleware.RequirePermission("page:delete"), handler.DeletePage(db))
 
 			orders := authGroup.Group("/orders")
 			orders.GET("", middleware.RequireAnyPermission("order:read", "order:write"), handler.ListOrders(db))

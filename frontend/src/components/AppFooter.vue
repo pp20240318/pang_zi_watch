@@ -1,3 +1,50 @@
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { fetchPages } from '../api/public.js'
+
+const FOOTER_CATEGORIES = ['购物指南', '售后服务', '关于我们']
+const LEGAL_CATEGORY = '法律条款'
+
+const fallbackPages = [
+  { slug: 'shopping-flow', title: '购物流程', category: '购物指南' },
+  { slug: 'payment-methods', title: '支付方式', category: '购物指南' },
+  { slug: 'order-query', title: '订单查询', category: '购物指南' },
+  { slug: 'delivery', title: '配送说明', category: '购物指南' },
+  { slug: 'return-policy', title: '退换政策', category: '售后服务' },
+  { slug: 'warranty', title: '保修条款', category: '售后服务' },
+  { slug: 'service-centers', title: '维修网点', category: '售后服务' },
+  { slug: 'faq', title: '常见问题', category: '售后服务' },
+  { slug: 'brand-story', title: '品牌故事', category: '关于我们' },
+  { slug: 'stores', title: '门店地址', category: '关于我们' },
+  { slug: 'business', title: '商务合作', category: '关于我们' },
+  { slug: 'contact', title: '联系我们', category: '关于我们' },
+  { slug: 'privacy', title: '隐私政策', category: '法律条款' },
+  { slug: 'terms', title: '用户协议', category: '法律条款' },
+]
+
+const pages = ref([...fallbackPages])
+
+onMounted(async () => {
+  try {
+    const data = await fetchPages()
+    if (data.length) pages.value = data
+  } catch {
+    /* 使用 fallbackPages */
+  }
+})
+
+const footerGroups = computed(() =>
+  FOOTER_CATEGORIES.map((category) => ({
+    category,
+    items: pages.value.filter((p) => p.category === category),
+  })).filter((g) => g.items.length > 0)
+)
+
+const legalPages = computed(() =>
+  pages.value.filter((p) => p.category === LEGAL_CATEGORY)
+)
+</script>
+
 <template>
   <footer class="site-footer">
     <div class="footer-inner">
@@ -11,33 +58,15 @@
           </div>
         </div>
 
-        <div class="footer-col">
-          <h5>购物指南</h5>
+        <div v-for="group in footerGroups" :key="group.category" class="footer-col">
+          <h5>{{ group.category }}</h5>
           <ul>
-            <li><a href="#">购物流程</a></li>
-            <li><a href="#">支付方式</a></li>
-            <li><a href="#order-query">订单查询</a></li>
-            <li><a href="#">配送说明</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h5>售后服务</h5>
-          <ul>
-            <li><a href="#">退换政策</a></li>
-            <li><a href="#">保修条款</a></li>
-            <li><a href="#">维修网点</a></li>
-            <li><a href="#">常见问题</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h5>关于我们</h5>
-          <ul>
-            <li><a href="#">品牌故事</a></li>
-            <li><a href="#">门店地址</a></li>
-            <li><a href="#">商务合作</a></li>
-            <li><a href="#">联系我们</a></li>
+            <li v-for="item in group.items" :key="item.slug">
+              <router-link v-if="item.slug !== 'order-query'" :to="`/page/${item.slug}`">
+                {{ item.title }}
+              </router-link>
+              <a v-else href="#order-query">{{ item.title }}</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -52,18 +81,17 @@
       </div>
 
       <div class="footer-bottom">
-        <p class="footer-nav-links">
-          <a href="#">品牌馆</a>
-          <span>|</span>
-          <a href="#">新品上市</a>
-        </p>
         <p>© 2026 胖子腕表 Pangzi Watches. 保留所有权利.</p>
-        <p class="footer-legal">
-          <a href="#">隐私政策</a>
+        <p v-if="legalPages.length" class="footer-legal">
+          <template v-for="(item, idx) in legalPages" :key="item.slug">
+            <router-link :to="`/page/${item.slug}`">{{ item.title }}</router-link>
+            <span v-if="idx < legalPages.length - 1">|</span>
+          </template>
           <span>|</span>
-          <a href="#">用户协议</a>
-          <span>|</span>
-          <a href="#">ICP备案号：京ICP备xxxxxxxx号</a>
+          <span>ICP备案号：京ICP备xxxxxxxx号</span>
+        </p>
+        <p v-else class="footer-legal">
+          <span>ICP备案号：京ICP备xxxxxxxx号</span>
         </p>
       </div>
     </div>
@@ -196,26 +224,6 @@
 
 .footer-bottom p {
   margin: 0 0 8px;
-}
-
-.footer-nav-links {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px !important;
-  opacity: 0.85;
-}
-
-.footer-nav-links a {
-  color: var(--color-accent);
-  text-decoration: none;
-  transition: opacity 0.2s;
-}
-
-.footer-nav-links a:hover {
-  opacity: 0.8;
-  text-decoration: underline;
 }
 
 .footer-legal {

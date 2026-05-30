@@ -5,6 +5,7 @@ import DashboardView from '../views/DashboardView.vue'
 import BrandListView from '../views/BrandListView.vue'
 import ProductListView from '../views/ProductListView.vue'
 import BannerListView from '../views/BannerListView.vue'
+import PageListView from '../views/PageListView.vue'
 import OrderListView from '../views/OrderListView.vue'
 import AdminManagementView from '../views/AdminManagementView.vue'
 import RoleManagementView from '../views/RoleManagementView.vue'
@@ -16,6 +17,7 @@ const routes = [
   { path: '/brands', name: 'brands', component: BrandListView, meta: { requiresAuth: true } },
   { path: '/products', name: 'products', component: ProductListView, meta: { requiresAuth: true } },
   { path: '/banners', name: 'banners', component: BannerListView, meta: { requiresAuth: true } },
+  { path: '/pages', name: 'pages', component: PageListView, meta: { requiresAuth: true } },
   { path: '/orders', name: 'orders', component: OrderListView, meta: { requiresAuth: true } },
   { path: '/admins', name: 'admins', component: AdminManagementView, meta: { requiresAuth: true } },
   { path: '/roles', name: 'roles', component: RoleManagementView, meta: { requiresAuth: true } },

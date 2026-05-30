@@ -50,6 +50,18 @@ type Product struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+type ContentPage struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Slug      string    `gorm:"uniqueIndex;size:64" json:"slug"`
+	Title     string    `gorm:"size:128" json:"title"`
+	Category  string    `gorm:"size:64;index" json:"category"`
+	Body      string    `gorm:"type:longtext" json:"body"`
+	Sort      int       `gorm:"default:0" json:"sort"`
+	Enabled   bool      `gorm:"default:true" json:"enabled"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 type Banner struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	Title     string    `gorm:"size:128" json:"title"`

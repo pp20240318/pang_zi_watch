@@ -14,7 +14,7 @@ import logoUrl from '../assets/logo.svg'
       </router-link>
 
       <nav class="header-nav">
-        <a href="#" class="nav-link">售后服务</a>
+        <router-link to="/page/return-policy" class="nav-link">售后服务</router-link>
         <a href="#order-query" class="nav-link">订单查询</a>
       </nav>
     </div>
