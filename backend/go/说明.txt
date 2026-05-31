@@ -1,0 +1,4 @@
+IP:localhost
+库名：watch
+用户名：watch
+密码：Aa123456

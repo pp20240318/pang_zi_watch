@@ -26,7 +26,7 @@ const emit = defineEmits(['select'])
 
     <div class="sidebar-promo">
       <img
-        src="https://images.unsplash.com/photo-1612817159947-7b7d7f8b5e0e?w=400&q=80&auto=format&fit=crop"
+        src="/images/products/watch-05.jpg"
         alt="精品腕表"
         class="promo-img"
       />
