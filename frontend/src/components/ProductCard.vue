@@ -5,6 +5,11 @@ const props = defineProps({
   product: { type: Object, required: true },
 })
 
+const detailTo = computed(() => ({
+  name: 'product',
+  params: { id: String(props.product.id) },
+}))
+
 const orderTo = computed(() => ({
   path: '/order',
   query: { productId: String(props.product.id) },
@@ -25,13 +30,13 @@ const starData = stars(props.product.rating)
 
 <template>
   <article class="product-card">
-    <div class="product-image-wrap">
+    <router-link :to="detailTo" class="product-image-wrap">
       <img :src="product.image" :alt="product.name" class="product-image" loading="lazy" />
       <span v-if="product.tag" class="product-tag">{{ product.tag }}</span>
-    </div>
+    </router-link>
 
     <div class="product-body">
-      <h4 class="product-name">{{ product.name }}</h4>
+      <router-link :to="detailTo" class="product-name">{{ product.name }}</router-link>
 
       <div class="product-rating">
         <span class="stars" aria-label="评分 {{ product.rating }}">
@@ -72,9 +77,12 @@ const starData = stars(props.product.rating)
 
 .product-image-wrap {
   position: relative;
+  display: block;
   aspect-ratio: 1;
   overflow: hidden;
   background: #f8f7f5;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .product-image {
@@ -110,10 +118,16 @@ const starData = stars(props.product.rating)
   color: var(--color-primary);
   margin: 0 0 10px;
   line-height: 1.4;
+  text-decoration: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transition: color 0.2s;
+}
+
+.product-name:hover {
+  color: var(--color-accent);
 }
 
 .product-rating {
